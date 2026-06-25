@@ -25,7 +25,9 @@ void setup()
 void loop()
 {
     // Executa a movimentação do servo
-    servo_pino_h.OperacaoServo();
+    servo_pino_h.MoverServo();
+
+    
 
     // Realiza uma medição de distância
     float distancia = sensor_pino_h.OperacaoSensor_Distancia();
@@ -33,8 +35,11 @@ void loop()
     // Exibe o resultado no Monitor Serial
     //Serial.print("Angulo ");
     //Serial.print(servo_pos);
+    Serial.print("Ângulo: ");
+    Serial.print(servo_pino_h.ObterAngulo());
+    Serial.print(" Graus: ");
 
-    Serial.print("Distancia: ");
+    Serial.print("Distância: ");
     Serial.print(distancia);
     Serial.println(" cm");
 

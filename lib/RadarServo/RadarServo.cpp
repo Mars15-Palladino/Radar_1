@@ -11,14 +11,23 @@ void RadarServo::pino_atribuido(byte PinoServo_Atr){
         RadarServo1.attach(pinoServo);
     }
 };
-void RadarServo::OperacaoServo(){
-    servo_pos = 0;
-    for(servo_pos=0;servo_pos<=90;servo_pos++){
+void RadarServo::MoverServo(){
+    for(servo_pos=1;servo_pos<=90;servo_pos++){
         RadarServo1.write(servo_pos);
+
+        Serial.print("Angulo: ");
+        Serial.println(servo_pos);
+
+    
         delay(20);
     }
-    for(servo_pos=90;servo_pos>=0;servo_pos--){
+    for(servo_pos=90;servo_pos>=1;servo_pos--){
         RadarServo1.write(servo_pos);
         delay(20);    
     }
+    
+}
+
+int RadarServo::ObterAngulo(){
+    return servo_pos;
 }
