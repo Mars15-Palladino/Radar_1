@@ -2,6 +2,7 @@
 #define SENSOR_RADAR_H
 
 #include <Arduino.h>    // Funções e tipos básicos do Arduino
+#include "RadarServo.h"
 
 // Classe responsável por controlar o sensor ultrassônico HC-SR04
 class RadarSensor
@@ -16,6 +17,9 @@ private:
 
     // Armazena o tempo medido pelo ECHO em microssegundos
     unsigned long tempoEco;
+    unsigned long Ultimo_Movimento_Sensor;
+    unsigned long Ultimo_Tempo_Movimeto_Sensor = 20;
+    float Ultima_Distancia;
 
 public:
 
@@ -24,6 +28,8 @@ public:
 
     // Executa uma medição e retorna a distância em centímetros
     float OperacaoSensor_Distancia();
+    //Retorno dos valores
+    void Informacoes();
 };
 
 #endif
