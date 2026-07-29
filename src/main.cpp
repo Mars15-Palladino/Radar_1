@@ -1,12 +1,16 @@
 #include <Arduino.h>      // Biblioteca principal do Arduino
 #include "RadarServo.h"   // Biblioteca criada para controlar o servo
 #include "RadarSensor.h"  // Biblioteca criada para controlar o HC-SR04
+#include "RadarMenu.h"
 
 // Criação do objeto responsável pelo servo
 RadarServo servo_pino_h;
 
 // Criação do objeto responsável pelo sensor ultrassônico
 RadarSensor sensor_pino_h;
+
+RadarMenu radar_menu(&sensor_pino_h, &servo_pino_h); // Criação do objeto responsável pelo menu do radar
+
 
 void setup()
 {
@@ -20,10 +24,17 @@ void setup()
     // TRIG = pino 5
     // ECHO = pino 6
     sensor_pino_h.pino_sensor_atribuido(5, 6);
+
+    radar_menu.IniciarMenu();
 }
 
 void loop()
 {
+    if(radar_menu.LerOpcao_Menu()){
+        radar_menu.ExecutarOpcao_Menu();
+    }
+
+    /*
     // Executa a movimentação do servo
     if(servo_pino_h.MoverServo() == true)
     {  
