@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 #include "ModoAutomatico.h"
+#include "ModoManual.h"
+
 #include "RadarSensor.h"
 #include "RadarServo.h"
 
@@ -12,8 +14,9 @@ class RadarMenu
         int opcao;
         RadarSensor* sensor;
         RadarServo* servo;
+        ModoManual* modoManual;
     public:
-        RadarMenu(RadarSensor* sensor, RadarServo* servo);
+        RadarMenu(RadarSensor* sensor, RadarServo* servo, ModoManual* modoManual);
         void IniciarMenu();
         bool LerOpcao_Menu();
         void ExecutarOpcao_Menu();

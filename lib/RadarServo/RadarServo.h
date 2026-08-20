@@ -4,6 +4,7 @@
 #include <Arduino.h>       // Biblioteca principal do Arduino
 #include <Servo.h>         // Biblioteca responsável pelo controle de servomotores
 
+
 // Classe responsável pelo controle do servo motor do radar
 class RadarServo
 {
@@ -33,10 +34,14 @@ public:
     void pino_atribuido(byte PinoServo_Atr);
 
     // Executa a movimentação automática do servo (varredura).
-    bool MoverServo();
+    bool MoverServo_automatico();
 
     // Retorna o último ângulo armazenado na variável servo_pos.
     int ObterAngulo();
+
+    // RECEBE O VALOR DO JOYSTICK E MOVE O SERVO
+    void ControleManual(int valor_joystick);
+    
 };
 
 #endif

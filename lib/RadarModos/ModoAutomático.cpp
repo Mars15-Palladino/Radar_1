@@ -21,7 +21,7 @@ void ModoAutomatico::ExecutarModoAutomatico(){
                 //return;  // Sai da função para evitar a execução do restante do código (Se eu deixar o return o resultado do zero não funciona de forma correta, então comentei ele)
             }
         }
-            if(servo->MoverServo() == true)
+            if(servo->MoverServo_automatico() == true)
             {  
                 float distancia = sensor->OperacaoSensor_Distancia();
             // Exibe o resultado no Monitor Serial

@@ -14,7 +14,7 @@ void RadarServo::pino_atribuido(byte PinoServo_Atr){
         RadarServo1.attach(pinoServo);
     }
 };
-bool RadarServo::MoverServo(){
+bool RadarServo::MoverServo_automatico(){
      if(millis()-ultimoMovimento_Servo >= intervalo_Movimeto_Servo){
         ultimoMovimento_Servo = millis();// milis é a função, armazena último tempo marcado
                                          // Armazena o instante (em milissegundos) em que o servo realizou
@@ -40,4 +40,17 @@ bool RadarServo::MoverServo(){
    
 int RadarServo::ObterAngulo(){
     return servo_pos;
+}
+void RadarServo::ControleManual(int valor_joystick){
+    // GARANTE QUE A LEITURA DO A0 ESTEJA DENTRO DA FAIXA ANALOGICA
+    valor_joystick = constrain(valor_joystick, 0, 1023);
+
+    // CONVERTE A LEITURA DO A0 PARA UM ANGULO DE 0 A 180 GRAUS
+    servo_pos = map(valor_joystick, 0, 1023, 0, 180);
+
+    // LIMITA O ANGULO PARA PROTEGER O SERVO CONTRA VALORES FORA DA FAIXA
+    servo_pos = constrain(servo_pos, 0, 180);
+
+    // ENVIA O ANGULO CALCULADO PARA O SERVO
+    RadarServo1.write(servo_pos);
 }

@@ -3,13 +3,21 @@
 #include "RadarSensor.h"  // Biblioteca criada para controlar o HC-SR04
 #include "RadarMenu.h"
 
+#include "ModoManual.h"
+
 // Criação do objeto responsável pelo servo
 RadarServo servo_pino_h;
 
 // Criação do objeto responsável pelo sensor ultrassônico
 RadarSensor sensor_pino_h;
 
-RadarMenu radar_menu(&sensor_pino_h, &servo_pino_h); // Criação do objeto responsável pelo menu do radar
+// CRIAÇÃO DO OBJETO RESPONSÁVEL PELO CONTROLE MANUAL
+ModoManual joystick_pino_h(&servo_pino_h);
+
+// CRIAÇÃO DO OBJETO RESPONSÁVEL PELO MENU DO RADAR
+RadarMenu radar_menu(&sensor_pino_h, &servo_pino_h, &joystick_pino_h);
+
+
 
 
 void setup()
@@ -24,6 +32,9 @@ void setup()
     // TRIG = pino 5
     // ECHO = pino 6
     sensor_pino_h.pino_sensor_atribuido(5, 6);
+
+    // CONFIGURA O PINO ANALOGICO A0 PARA O CONTROLE MANUAL
+    joystick_pino_h.joystick_pino_atribuido(A0);
 
     radar_menu.IniciarMenu();
 }

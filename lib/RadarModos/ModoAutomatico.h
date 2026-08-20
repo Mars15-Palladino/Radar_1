@@ -11,8 +11,9 @@ class ModoAutomatico {
         bool funcionamentoModo_automatico = true; // Variável para controlar o loop do modo automático
 
     public:
-        ModoAutomatico(RadarSensor* sensor, RadarServo* servo);
+        ModoAutomatico(RadarSensor* sensor, RadarServo* servo);// Construtor que recebe os ponteiros para o sensor e o servo
         void ExecutarModoAutomatico();
 };
+
 
 #endif
