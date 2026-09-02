@@ -2,10 +2,13 @@
 #define Modo_Manual_h
 
 #include "RadarServo.h"
+#include "RadarSensor.h"
 
 class ModoManual{
     private:
-    RadarServo* servo;
+    RadarSensor*sensor; // ponteiro para o sensor
+    RadarServo* servo; // ponteiro para o servo
+
     bool funcionamento_manual = true;
     unsigned long ultimoMovimento_Joystick_Servo;
     unsigned long Intervalo_movimento_Joystick_Servo = 10; 
@@ -16,7 +19,7 @@ class ModoManual{
     int valor_joystick;
     
     public:
-    ModoManual(RadarServo*servo);
+    ModoManual(RadarSensor*sensor,RadarServo*servo);
 
     void joystick_pino_atribuido(byte pinoJoystick_Atr);
 
