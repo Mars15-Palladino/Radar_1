@@ -1,9 +1,10 @@
 #include "RadarMenu.h"
 
-RadarMenu::RadarMenu(RadarSensor* sensor, RadarServo* servo, ModoManual* modoManual){
+RadarMenu::RadarMenu(RadarSensor* sensor, RadarServo* servo, ModoManual* modoManual, ModoAutomatico* modoAutomatico){
     this->sensor = sensor;
     this->servo = servo;
     this->modoManual = modoManual;
+    this->modoAutomatico = modoAutomatico;
 }
 
 void RadarMenu::IniciarMenu(){
@@ -47,19 +48,23 @@ void RadarMenu::ExecutarOpcao_Menu(){
     switch(opcao){
         case 1:{
             Serial.println("Modo Automático selecionado.");
-            // Adicione aqui o código para executar o modo automático
-            ModoAutomatico modoAuto(sensor, servo);
-            modoAuto.ExecutarModoAutomatico();
+            modoManual->DesativarModoManual();
+            modoAutomatico->AtivarModoAutomatico();
+            estavaNoModoAutomatico = true;
             break;
         }
         case 2:{
-            Serial.println("Modo Manual selecionado");
-            modoManual->ExecutarModoManual();
+             Serial.println("Modo Manual selecionado");
+             modoAutomatico->DesativarModoAutomatico();
+             modoManual->AtivarModoManual();
             break;
         }
         case 0:{
             Serial.println("Encerrando operação.");
-            // Adicione aqui o código para encerrar a operação
+            modoAutomatico->DesativarModoAutomatico();
+            modoManual->DesativarModoManual();
+            opcao = -1;
+            IniciarMenu();
             break;
         }
         default:
@@ -67,6 +72,41 @@ void RadarMenu::ExecutarOpcao_Menu(){
             //Retorna para o menu se a opção for inválida
             break;
     }
+    if(!modoAutomatico->ModoAutomaticoAtivo() && !modoManual->ModoManualAtivo()){
     opcao = -1; // Reseta a opção para evitar execução repetida
     IniciarMenu(); // Retorna para o menu após a execução da opção
+    }
+}
+void RadarMenu::AtualizarModoAutomatico()
+{
+    if(modoAutomatico->ModoAutomaticoAtivo())
+    {
+        modoAutomatico->ExecutarModoAutomatico();
+
+        if(!modoAutomatico->ModoAutomaticoAtivo())
+        {
+            IniciarMenu();
+        }
+    }
+
+}
+bool RadarMenu::ModoAutomaticoAtivo()
+{
+    return modoAutomatico->ModoAutomaticoAtivo();
+}
+bool RadarMenu::ModoManualAtivo()
+{
+    return modoManual->ModoManualAtivo();
+}
+void RadarMenu::AtualizarModoManual()
+{
+    if(modoManual->ModoManualAtivo())
+    {
+        modoManual->ExecutarModoManual();
+
+        if(!modoManual->ModoManualAtivo())
+        {
+            IniciarMenu();
+        }
+    }
 }

@@ -14,12 +14,21 @@ class RadarMenu
         int opcao;
         RadarSensor* sensor;
         RadarServo* servo;
+        ModoAutomatico* modoAutomatico;
         ModoManual* modoManual;
+        bool estavaNoModoAutomatico = false;
     public:
-        RadarMenu(RadarSensor* sensor, RadarServo* servo, ModoManual* modoManual);
+        RadarMenu(RadarSensor* sensor, RadarServo* servo, ModoManual* modoManual, ModoAutomatico* modoAutomatico);
         void IniciarMenu();
         bool LerOpcao_Menu();
+        
         void ExecutarOpcao_Menu();
+        
+        void AtualizarModoAutomatico();
+        bool ModoAutomaticoAtivo();
+
+        bool ModoManualAtivo();
+        void AtualizarModoManual();
 };
 
    

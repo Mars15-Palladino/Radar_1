@@ -22,12 +22,19 @@ class Interface_Fisica_Modulo{//Classe que representa a interface física do mó
         //quem transporta os dados para o microcontrolador do display, é o barramento SPI o pino MOSI, que é um protocolo de comunicação serial síncrono. O Adafruit_ST7735 usa a biblioteca SPI para enviar os dados do Arduino para o display.
 
         Adafruit_ST7735 tela_TFT; // Objeto da classe Adafruit_ST7735, que representa o display ST7735, usado para desenhar na tela do radar, como linhas, círculos, retângulos, etc. O objeto é inicializado com os pinos de controle do display (CS, DC e RST) e é usado para enviar comandos e dados para o display. Usado pelo construtor da classe Interface_Fisica_Modulo para inicializar o display e fazer a comunicação com o microcontrolador do display.
+            int ultimoAnguloRadar = 0;
+            int ultimoObjetoX = 0;
+            int ultimoObjetoY = 0;
+            bool ultimoObjetoDetectado = false;
+            bool radarJaAtualizado = false;
 
     public: //Funções públicas
 
     Interface_Fisica_Modulo(); // Construtor da classe, inicializa a interface física do módulo de radar, faz comunicação com o CPP, Obriagtório ter o mesmo nome da classe.
 
     void inicializar_tela(); // Função que inicializa o display, limpa a tela e configura o modo de exibição, deve ser chamada no setup() do Arduino.
+    void Recebe_Dados(float distanciaRecebidaSensor, int anguloRecebidoServo);
+     void DesenharRadar();
 
     
 };

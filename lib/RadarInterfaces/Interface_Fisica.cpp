@@ -1,38 +1,133 @@
 #include "Interface_Fisica.h"
+#include <math.h>
+
+int16_t x1, y1;
+uint16_t largura, altura;
+
+namespace
+{
+const int CentroRadarX = 80;
+const int CentroRadarY = 127;
+const int RaioMaximoRadar = 78;
+const float DistanciaMaximaRadar = 250.0;
+}
 
 Interface_Fisica_Modulo::Interface_Fisica_Modulo():tela_TFT(TFT_Pino_CS, TFT_Pino_DC, TFT_Pino_RST){
 
 }
 
-void Interface_Fisica_Modulo::inicializar_tela(){
-    tela_TFT.initR(INITR_BLACKTAB);// Inicializa o display com a configuração de cor vermelha (INITR_REDTAB) para o ST7735, que define a ordem dos pinos e a forma como os dados são enviados para o display.
+void Interface_Fisica_Modulo::Recebe_Dados(float distanciaRecebidaSensor, int anguloRecebidoServo){
+    int anguloRadar = constrain(anguloRecebidoServo, 0, 180);
 
-    tela_TFT.setRotation(1);// Define a rotação da tela para 1, que é a orientação paisagem (landscape) do display. Isso significa que o lado mais longo do display estará na horizontal e o lado mais curto estará na vertical. A rotação é importante para garantir que os elementos gráficos sejam desenhados corretamente na tela. Aceita valores de 0 a 3, onde cada valor representa uma rotação diferente (0 = retrato, 1 = paisagem, 2 = retrato invertido, 3 = paisagem invertida).
+    if (radarJaAtualizado)
+    {
+        for (int deslocamento = -10; deslocamento <= 0; deslocamento++)
+        {
+            int anguloRastro = constrain(ultimoAnguloRadar + deslocamento, 0, 180);
+            float radianoRastro = anguloRastro * PI / 180.0;
+            int fimRastroX = CentroRadarX + cos(radianoRastro) * RaioMaximoRadar;
+            int fimRastroY = CentroRadarY - sin(radianoRastro) * RaioMaximoRadar;
+            tela_TFT.drawLine(CentroRadarX, CentroRadarY, fimRastroX, fimRastroY, ST77XX_BLACK);
+        }
 
-    tela_TFT.fillScreen(ST77XX_BLACK);// Limpa a tela do display, preenchendo-a com a cor preta (ST77XX_BLACK), que é definida na biblioteca Adafruit_ST7735.h. Isso garante que a tela esteja limpa antes de desenhar qualquer coisa nela.
+        if (ultimoObjetoDetectado)
+        {
+            tela_TFT.drawLine(CentroRadarX, CentroRadarY, ultimoObjetoX, ultimoObjetoY, ST77XX_BLACK);
+            tela_TFT.fillCircle(ultimoObjetoX, ultimoObjetoY, 3, ST77XX_BLACK);
+        }
 
-    tela_TFT.setTextColor(ST77XX_YELLOW);// Define a cor do texto
-    tela_TFT.setTextSize(1);// Define o tamanho do texto, ocupando 6 pixel de largura e 8 pixel de altura por caractere. O tamanho do texto pode ser ajustado para valores maiores, como 2, 3, etc., para aumentar a legibilidade do texto na tela.
+        DesenharRadar();
+    }
 
-    tela_TFT.setCursor(40, 2);// Define a posição do cursor para o texto
-    tela_TFT.print("Radar");
+    for (int deslocamento = -10; deslocamento <= 0; deslocamento++)
+    {
+        int anguloRastro = constrain(anguloRadar + deslocamento, 0, 180);
+        float radianoRastro = anguloRastro * PI / 180.0;
+        int fimRastroX = CentroRadarX + cos(radianoRastro) * RaioMaximoRadar;
+        int fimRastroY = CentroRadarY - sin(radianoRastro) * RaioMaximoRadar;
+        uint16_t corRastro = deslocamento == 0
+            ? ST77XX_GREEN
+            : tela_TFT.color565(0, 35 + (deslocamento + 10) * 4, 0);
 
-    tela_TFT.setTextColor(ST77XX_WHITE);// Define a cor do texto
-    tela_TFT.setTextSize(1);// Define o tamanho do texto
-    tela_TFT.setCursor(40, 40);// Define a posição do cursor para o texto
-    tela_TFT.print("Centro");
+        tela_TFT.drawLine(CentroRadarX, CentroRadarY, fimRastroX, fimRastroY, corRastro);
+    }
 
+    bool objetoDetectado = distanciaRecebidaSensor > 0;
+    if (objetoDetectado)
+    {
+        float radiano = anguloRadar * PI / 180.0;
+        float distanciaNoRadar = min(distanciaRecebidaSensor, DistanciaMaximaRadar);
+        int raioObjeto = (distanciaNoRadar * RaioMaximoRadar) / DistanciaMaximaRadar;
+        int objetoX = CentroRadarX + cos(radiano) * raioObjeto;
+        int objetoY = CentroRadarY - sin(radiano) * raioObjeto;
+        tela_TFT.fillCircle(objetoX, objetoY, 2, ST77XX_RED);
+    }
 
-    tela_TFT.setTextColor(ST77XX_WHITE);// Define a cor do texto
-    tela_TFT.setTextSize(1);// Define o tamanho do texto
-    tela_TFT.setCursor(40, 50);// Define a posição do cursor para o texto
-    tela_TFT.print("03/09/2026");
+    tela_TFT.fillRect(0, 113, 25, 12, ST77XX_BLACK);
+    tela_TFT.setTextColor(ST77XX_GREEN);
+    tela_TFT.setTextSize(1);
+    tela_TFT.setCursor(2, 115);
+    tela_TFT.print(anguloRadar);
 
+    ultimoAnguloRadar = anguloRadar;
+    ultimoObjetoDetectado = objetoDetectado;
+    float distanciaNoRadar = min(distanciaRecebidaSensor, DistanciaMaximaRadar);
+    ultimoObjetoX = objetoDetectado ? CentroRadarX + cos(anguloRadar * PI / 180.0) * ((distanciaNoRadar * RaioMaximoRadar) / DistanciaMaximaRadar) : 0;
+    ultimoObjetoY = objetoDetectado ? CentroRadarY - sin(anguloRadar * PI / 180.0) * ((distanciaNoRadar * RaioMaximoRadar) / DistanciaMaximaRadar) : 0;
+    radarJaAtualizado = true;
 
-   delay(2000);// Aguarda 2 segundos para que o usuário possa ver a tela inicial antes de prosseguir com o restante do código. Isso é útil para exibir informações importantes, como o nome do projeto, a data ou outras mensagens iniciais, antes de iniciar a operação principal do radar.
+}
+void Interface_Fisica_Modulo::DesenharRadar()
+{
+    const int raios[] = {16, 31, 47, 62, 78};
+    const int distancias[] = {50, 100, 150, 200, 250};
 
-   tela_TFT.fillRect(35, 35, 120, 52, ST77XX_RED);// Limpa a tela do display novamente, preenchendo-a com a cor preta (ST77XX_BLACK). Isso é feito para remover a tela inicial e preparar o display para exibir as informações principais do radar.
+    // Arcos do radar
+    for (int indice = 0; indice < 5; indice++)
+    {
+        int raio = raios[indice];
 
+        for (int grau = 0; grau <= 180; grau++)
+        {
+            float radiano = grau * PI / 180.0;
 
+            int x = CentroRadarX + cos(radiano) * raio;
+            int y = CentroRadarY - sin(radiano) * raio;
 
+            tela_TFT.drawPixel(x, y, ST77XX_GREEN);
+        }
+
+        tela_TFT.setTextColor(ST77XX_GREEN);
+        tela_TFT.setTextSize(1);
+        String textoDistancia = String(distancias[indice]) + "cm";
+        int16_t textoX;
+        int16_t textoY;
+        uint16_t textoLargura;
+        uint16_t textoAltura;
+        tela_TFT.getTextBounds(textoDistancia, 0, 0, &textoX, &textoY, &textoLargura, &textoAltura);
+        tela_TFT.setCursor(CentroRadarX - textoLargura / 2, CentroRadarY - raio - 8);
+        tela_TFT.print(distancias[indice]);
+        tela_TFT.print("cm");
+    }
+
+    for (int grau = 0; grau <= 180; grau += 5)
+    {
+        float radiano = grau * PI / 180.0;
+        int comprimentoMarca = grau % 30 == 0 ? 6 : 3;
+        int inicioX = CentroRadarX + cos(radiano) * (RaioMaximoRadar - comprimentoMarca);
+        int inicioY = CentroRadarY - sin(radiano) * (RaioMaximoRadar - comprimentoMarca);
+        int fimX = CentroRadarX + cos(radiano) * RaioMaximoRadar;
+        int fimY = CentroRadarY - sin(radiano) * RaioMaximoRadar;
+
+        tela_TFT.drawLine(inicioX, inicioY, fimX, fimY, ST77XX_GREEN);
+    }
+
+}
+void Interface_Fisica_Modulo::inicializar_tela()
+{
+    tela_TFT.initR(INITR_BLACKTAB);
+    tela_TFT.setRotation(1);
+    tela_TFT.fillScreen(ST77XX_BLACK);
+
+    DesenharRadar();
 }

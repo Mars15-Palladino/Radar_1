@@ -6,19 +6,22 @@ ModoAutomatico::ModoAutomatico(RadarSensor* sensor, RadarServo* servo){
 
 }
 void ModoAutomatico::ExecutarModoAutomatico(){
-    while(funcionamentoModo_automatico == true){// por enquanto ele tende a ser um comando bloqueante, mas futuramente será um comando não bloqueante       
         if(Serial.available()>0){
             char teclado = Serial.read();
+
+            while (Serial.available() > 0) {
+                Serial.read();
+            }
 
             switch(teclado){
                 case '0':
                         funcionamentoModo_automatico = false;
                         Serial.println("==================================");
                         Serial.println("Operação automática encerrada.");
-                    break;
+                        return;
             default:
                 Serial.println("Opção inválida. Pressione 0 para encerrar a operação automática.");
-                //return;  // Sai da função para evitar a execução do restante do código (Se eu deixar o return o resultado do zero não funciona de forma correta, então comentei ele)
+                return;  // Sai da função para evitar a execução do restante do código (Se eu deixar o return o resultado do zero não funciona de forma correta, então comentei ele)
             }
         }
             if(servo->MoverServo_automatico() == true)
@@ -34,7 +37,6 @@ void ModoAutomatico::ExecutarModoAutomatico(){
             Serial.println(" cm");
             }
         }
-    }
     /*
     // Executa a movimentação do servo
     if(servo_pino_h.MoverServo() == true)
@@ -68,4 +70,15 @@ void ModoAutomatico::ExecutarModoAutomatico(){
     Serial.print(distancia);
     Serial.println(" cm");
     */
-
+bool ModoAutomatico::ModoAutomaticoAtivo()
+{
+    return funcionamentoModo_automatico;
+}
+void ModoAutomatico::AtivarModoAutomatico()
+{
+    funcionamentoModo_automatico = true;
+}
+void ModoAutomatico::DesativarModoAutomatico()
+{
+    funcionamentoModo_automatico = false;
+}

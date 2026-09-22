@@ -9,8 +9,8 @@ class ModoManual{
     RadarSensor*sensor; // ponteiro para o sensor
     RadarServo* servo; // ponteiro para o servo
 
-    bool funcionamento_manual = true;
-    unsigned long ultimoMovimento_Joystick_Servo;
+    bool funcionamento_manual = false;
+    unsigned long ultimoMovimento_Joystick_Servo = 0;
     unsigned long Intervalo_movimento_Joystick_Servo = 10; 
 
     // ARMAZENA O PINO DO JOYSTICK
@@ -26,5 +26,9 @@ class ModoManual{
     void ExecutarModoManual();
 
     int LerJoystick();
+    bool ModoManualAtivo();
+    void AtivarModoManual();
+    void DesativarModoManual();
+    void AtualizarModoManual();
 };
 #endif

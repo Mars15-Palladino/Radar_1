@@ -22,7 +22,7 @@ bool RadarServo::MoverServo_automatico(){
         if(sentidoHorario_Servo){
             servo_pos++;
             RadarServo1.write(servo_pos);
-            if(servo_pos >= 90){
+            if(servo_pos >= 180){
             sentidoHorario_Servo = false;
             }
         }

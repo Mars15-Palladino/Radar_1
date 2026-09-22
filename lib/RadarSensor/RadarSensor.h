@@ -28,8 +28,7 @@ public:
 
     // Executa uma medição e retorna a distância em centímetros
     float OperacaoSensor_Distancia();
-    //Retorno dos valores
-    void Informacoes();
+    
 };
 
 #endif

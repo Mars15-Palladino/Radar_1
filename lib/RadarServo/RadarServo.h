@@ -26,7 +26,7 @@ private:
     int servo_pos;
     bool sentidoHorario_Servo;             // true = indo para 90°, false = voltando para 0°
     unsigned long ultimoMovimento_Servo;   // Guarda o instante do último movimento
-    const unsigned long intervalo_Movimeto_Servo = 20; // Intervalo entre movimentos (20 ms)
+    const unsigned long intervalo_Movimeto_Servo = 15; // Intervalo entre movimentos (15 ms)
 
 public:
 
